@@ -1,25 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useContext, useEffect } from "react";
+import axios from "axios";
+import { appContext } from "./Components/Contexts/AppContext";
+import NavigationAndRoutes from "./Components/User/NavigationAndRoutes";
+import Footer from "./Components/User/Footer";
+import { Divider } from "@chakra-ui/react";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <div className="App">
+            <NavigationAndRoutes />
+            <Divider />
+            <Footer />
+        </div>
+    );
 }
 
 export default App;
