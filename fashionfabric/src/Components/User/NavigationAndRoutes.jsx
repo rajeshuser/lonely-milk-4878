@@ -4,27 +4,35 @@ import { VscAccount } from "react-icons/vsc";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import Home from "./Home";
 import Products from "./Products";
+import Product from "./Product";
 import Account from "./Account";
 import Cart from "./Cart";
 
 const links = [
     {
-        path: "/",
+        to: "/",
         presentation: <Image src=".../Resources/logo.png" />,
-        element: <Home />,
     },
-    { path: "/gifts", presentation: "Gifts", element: <Products /> },
-    { path: "/new", presentation: "New", element: <Products /> },
-    { path: "/women", presentation: "Women", element: <Products /> },
-    { path: "/men", presentation: "Men", element: <Products /> },
-    { path: "/children", presentation: "Children", element: <Products /> },
-    { path: "/outerwear", presentation: "Outerwear", element: <Products /> },
-    { path: "/bags", presentation: "Bags", element: <Products /> },
-    { path: "/account", presentation: <Icon as={VscAccount} boxSize={10} />, element: <Account /> },
     {
-        path: "/cart",
+        to: "/products/gifts",
+        presentation: "Gifts",
+    },
+    { to: "/products/new", presentation: "New" },
+    { to: "/products/women", presentation: "Women" },
+    { to: "/products/men", presentation: "Men" },
+    { to: "/products/children", presentation: "Children" },
+    {
+        to: "/products/outerwear",
+        presentation: "Outerwear",
+    },
+    { to: "/products/bags", presentation: "Bags" },
+    {
+        to: "/account",
+        presentation: <Icon as={VscAccount} boxSize={10} />,
+    },
+    {
+        to: "/cart",
         presentation: <Icon as={AiOutlineShoppingCart} boxSize={10} />,
-        element: <Cart />,
     },
 ];
 
@@ -35,6 +43,29 @@ const links = [
 // CHILDREN
 // OUTERWEAR
 // BAGS
+
+const routes = [
+    {
+        path: "/",
+        element: <Home />,
+    },
+    {
+        path: "/products/:option",
+        element: <Products />,
+    },
+    {
+        path: "/product/:id",
+        element: <Product />,
+    },
+    {
+        path: "/account",
+        element: <Account />,
+    },
+    {
+        path: "/cart",
+        element: <Cart />,
+    },
+];
 
 export default function NavigationAndRoutes() {
     const activeLinkStyle = {
@@ -59,12 +90,13 @@ export default function NavigationAndRoutes() {
                     padding="20px"
                     position="fixed"
                     height="inherit"
+                    zIndex="1000"
                 >
                     {links.map((link) => (
                         <Link
-                            key={link.path}
+                            key={link.to}
                             as={NavLink}
-                            to={link.path}
+                            to={link.to}
                             style={({ isActive }) =>
                                 isActive ? activeLinkStyle : defaultLinkStyle
                             }
@@ -75,8 +107,8 @@ export default function NavigationAndRoutes() {
                 </HStack>
             </Box>
             <Routes>
-                {links.map((link) => (
-                    <Route key={link.path} path={link.path} element={link.element} />
+                {routes.map((route) => (
+                    <Route key={route.path} path={route.path} element={route.element} />
                 ))}
             </Routes>
         </div>
