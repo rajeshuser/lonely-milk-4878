@@ -2,47 +2,45 @@ import { NavLink, Route, Routes } from "react-router-dom";
 import { Image, Icon, HStack, Link, Box, Divider } from "@chakra-ui/react";
 import { VscAccount } from "react-icons/vsc";
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import { BsKey } from "react-icons/bs";
 import Home from "./Home";
 import Products from "./Products";
 import Product from "./Product";
 import Account from "./Account";
+import Admin from "../Admin/Admin";
 import Cart from "./Cart";
-
+import logo from "../../Resources/logo.png";
 const links = [
     {
         to: "/",
-        presentation: <Image src=".../Resources/logo.png" />,
+        presentation: <Image src={logo} width="200%" />,
     },
     {
-        to: "/products/gifts",
+        to: "/products/gifts?category=gifts",
         presentation: "Gifts",
     },
-    { to: "/products/new", presentation: "New" },
-    { to: "/products/women", presentation: "Women" },
-    { to: "/products/men", presentation: "Men" },
-    { to: "/products/children", presentation: "Children" },
+    { to: "/products/new?isNew=true", presentation: "New" },
+    { to: "/products/women?gender=women", presentation: "Women" },
+    { to: "/products/men?gender=men", presentation: "Men" },
+    { to: "/products/children?ageGroup=children", presentation: "Children" },
     {
-        to: "/products/outerwear",
+        to: "/products/outerwear?isOuterwear=true",
         presentation: "Outerwear",
     },
-    { to: "/products/bags", presentation: "Bags" },
+    { to: "/products/bags?category=bags", presentation: "Bags" },
     {
         to: "/account",
         presentation: <Icon as={VscAccount} boxSize={10} />,
+    },
+    {
+        to: "/admin",
+        presentation: <Icon as={BsKey} boxSize={10} />,
     },
     {
         to: "/cart",
         presentation: <Icon as={AiOutlineShoppingCart} boxSize={10} />,
     },
 ];
-
-// GIFTS
-// NEW
-// WOMEN
-// MEN
-// CHILDREN
-// OUTERWEAR
-// BAGS
 
 const routes = [
     {
@@ -62,6 +60,10 @@ const routes = [
         element: <Account />,
     },
     {
+        path: "/admin",
+        element: <Admin />,
+    },
+    {
         path: "/cart",
         element: <Cart />,
     },
@@ -73,7 +75,7 @@ export default function NavigationAndRoutes() {
         fontWeight: "bold",
         textShadow: "0px 0px 3px white",
         textDecoration: "none",
-        width: "8%",
+        width: "10%",
     };
     const defaultLinkStyle = { color: "white", textDecoration: "none", width: "8%" };
 

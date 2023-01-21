@@ -1,70 +1,45 @@
-import { Box, Spinner, SimpleGrid, Heading } from "@chakra-ui/react";
-import { useEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { Heading, SimpleGrid } from "@chakra-ui/react";
+import { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import { useContext } from "react";
 import { appContext } from "../Contexts/AppContext";
-import { useState } from "react";
 import ProductCard from "./ProductCard";
-import Pagination from "./Pagination";
-import FilterSortSearch from "./FilterSortSearch";
 
-export default function Products() {
+export default function Favourites(user) {
     const { baseURL } = useContext(appContext);
-    const [requestStatus, setRequestStatus] = useState("success");
-    const [products, setProducts] = useState(dummyProducts);
-    const { option } = useParams();
-    const [searchParams, setSearchParams] = useSearchParams();
-
-    const handleSearchParams = (updatedSearchParams) => {
-        let newSearchParams = {};
-        for (let [param, value] of searchParams) {
-            newSearchParams = { ...newSearchParams, [param]: value };
-        }
-        newSearchParams = { ...newSearchParams, ...updatedSearchParams };
-        setSearchParams(newSearchParams);
-    };
+    const [favouriteProducts, setFavouriteProducts] = useState(dummyFavouriteProducts);
 
     useEffect(() => {
-        return;
-        setRequestStatus("loading");
-        getProducts();
-        async function getProducts() {
-            try {
-                let response = await axios({
-                    method: "get",
-                    baseURL,
-                    url: `/products?${searchParams.toString()}`,
-                });
-                setRequestStatus("success");
-                setProducts(response.data);
-            } catch (error) {
-                setRequestStatus("error");
+		return;
+        getFavouriteProducts();
+
+        function formatAsQueryParams(favouriteProductsIDs) {
+            let string = "";
+            for (let id of favouriteProductsIDs) {
+                if (favouriteProductsIDs.length > 1) string += "&";
+                string += "id" + id;
             }
         }
-    }, [searchParams]);
 
-    if (requestStatus === "loading") {
-        return <Spinner margin="100px" />;
-    } else if (requestStatus === "error") {
-        return <h1>Error</h1>;
-    } else if (requestStatus === "success") {
-        return (
-            <Box>
-                <Heading>{option[0].toUpperCase() + option.substring(1)}</Heading>
-                <FilterSortSearch handleSearchParams={handleSearchParams} />
-                <SimpleGrid minHeight="70vh" columns={4} spacing="5px" margin="10px">
-                    {products.map((product) => (
-                        <ProductCard {...product} />
-                    ))}
-                </SimpleGrid>
-                <Pagination handleSearchParams={handleSearchParams} />
-            </Box>
-        );
-    }
+        async function getFavouriteProducts() {
+            let response = await axios({
+                method: "get",
+                baseURL,
+                url: `/users?${formatAsQueryParams(user.favourites)}`,
+            });
+			setFavouriteProducts(response.data);
+        }
+    }, []);
+
+    return (
+        <SimpleGrid minHeight="70vh" columns={4} spacing="5px" margin="10px">
+            {favouriteProducts.map((product) => (
+                <ProductCard {...product} />
+            ))}
+        </SimpleGrid>
+    );
 }
 
-var dummyProducts = [
+var dummyFavouriteProducts = [
     {
         id: 1,
         name: "vel quam elementum pulvinar etiam non quam lacus suspendisse faucibus",

@@ -1,58 +1,53 @@
-import { Link, useNavigate } from "react-router-dom";
 import { Heading, SimpleGrid } from "@chakra-ui/react";
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { appContext } from "../Contexts/AppContext";
 import ProductCard from "./ProductCard";
 
-export default function Cart() {
-    const { baseURL, user } = useContext(appContext);
-    const [cartProducts, setCartProducts] = useState(dummyCartProducts);
-    const navigate = useNavigate();
-
-    if (user === null) {
-        alert("Please sign-in to see user cart");
-        // "navigate("/account")" is not immediatly getting triggered;
-        // being triggered after the browser is minimised and then clicked on the cart again
-        navigate("/account");
-        // below is alternative if above does not work
-        // return <Link to="/account">Go to account</Link>
-    }
+export default function Orders(user) {
+    const { baseURL } = useContext(appContext);
+    const [orderedProducts, setOrderedProducts] = useState(dummyOrderedProducts);
 
     useEffect(() => {
         return;
-        getCartProducts();
+        getOrderedProducts();
 
-        function formatAsQueryParams(cartProducts) {
-            // cartProducts = [[id, quantity], ...]
+        function formatAsQueryParams(orderedProducts) {
+            // orderedProducts = [[id, quantity], ...]
             let string = "";
-            for (let [id] of cartProducts) {
-                if (cartProducts.length > 1) string += "&";
+            for (let [id] of orderedProducts) {
+                if (orderedProducts.length > 1) string += "&";
                 string += "id" + id;
             }
         }
 
-        async function getCartProducts() {
+        async function getOrderedProducts() {
             let response = await axios({
                 method: "get",
                 baseURL,
-                url: `/users?${formatAsQueryParams(user.cart)}`,
+                url: `/users?${formatAsQueryParams(user.orders)}`,
             });
-            const cartProducts = response.data;
-            setCartProducts(cartProducts);
+
+            const orderedProducts = response.data;
+
+            for (let i = 0; i < user.orders; i++) {
+                // adding the key-value "quantity:number" in each "orderedProduct"
+                orderedProducts[i].quantity = user.orders[1];
+            }
+            setOrderedProducts(orderedProducts);
         }
     }, []);
 
     return (
         <SimpleGrid minHeight="70vh" columns={4} spacing="5px" margin="10px">
-            {cartProducts.map((product) => (
-                <ProductCard {...product} showCartButtons={true}/>
+            {orderedProducts.map((product) => (
+                <ProductCard {...product} />
             ))}
         </SimpleGrid>
     );
 }
 
-var dummyCartProducts = [
+var dummyOrderedProducts = [
     {
         quantity: 3,
         id: 1,

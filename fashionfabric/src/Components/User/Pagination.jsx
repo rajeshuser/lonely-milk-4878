@@ -3,7 +3,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 
 export default function Pagination(props) {
-    const { active = 3, limit = 5, total = 100, handlePageChange = function () {} } = props;
+    const { active = 3, limit = 5, total = 100, handleSearchParams } = props;
     const totalButtons = Math.ceil(total / limit);
     const countOfVisibleButtons = 5;
     const [activeButton, setActiveButton] = useState(active);
@@ -13,9 +13,7 @@ export default function Pagination(props) {
         buttons.push(
             <Button
                 key={b}
-                onClick={() => {
-                    setActiveButton(b);
-                }}
+                onClick={() => changeActiveButton(b)}
                 color={b === activeButton ? "white" : "black"}
                 backgroundColor={b === activeButton ? "black" : "white"}
                 _hover={{
@@ -28,31 +26,33 @@ export default function Pagination(props) {
         );
     }
 
+    const changeActiveButton = (newActiveButton) => {
+        if (activeButton === 1 || activeButton === totalButtons) {
+            return;
+        }
+
+        if (activeButton > newActiveButton && activeButton === startButton) {
+            setStartButton((startButton) => startButton - countOfVisibleButtons);
+        } else if (
+            activeButton < newActiveButton &&
+            activeButton === startButton + countOfVisibleButtons - 1
+        ) {
+            setStartButton((startButton) => startButton + countOfVisibleButtons);
+        }
+
+        setActiveButton(newActiveButton);
+        handleSearchParams({ _page: newActiveButton, _limit: limit });
+    };
+
     return (
         <HStack justifyContent="center">
             <ChevronLeftIcon
-                onClick={() => {
-                    if (activeButton === 1) {
-                        return;
-                    }
-                    if (activeButton === startButton) {
-                        setStartButton((startButton) => startButton - countOfVisibleButtons);
-                    }
-                    setActiveButton((activeButton) => Math.max(activeButton - 1, 1));
-                }}
+                onClick={() => changeActiveButton(activeButton - 1)}
                 _hover={{ cursor: "pointer" }}
             />
             {buttons}
             <ChevronRightIcon
-                onClick={() => {
-                    if (activeButton === totalButtons) {
-                        return;
-                    }
-                    if (activeButton === startButton + countOfVisibleButtons - 1) {
-                        setStartButton((startButton) => startButton + countOfVisibleButtons);
-                    }
-                    setActiveButton((activeButton) => Math.min(activeButton + 1, totalButtons));
-                }}
+                onClick={() => changeActiveButton(activeButton + 1)}
                 _hover={{ cursor: "pointer" }}
             />
         </HStack>

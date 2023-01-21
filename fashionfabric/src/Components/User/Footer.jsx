@@ -36,7 +36,7 @@ export default function Footer() {
             </UnorderedList>
 
             <Accordion allowToggle flex="1">
-                <AccordionItem>
+                <AccordionItem border="none">
                     <h2>
                         <AccordionButton>
                             <Box as="span" flex="1" textAlign="left">
@@ -54,7 +54,7 @@ export default function Footer() {
                     </AccordionPanel>
                 </AccordionItem>
 
-                <AccordionItem>
+                <AccordionItem border="none">
                     <h2>
                         <AccordionButton>
                             <Box as="span" flex="1" textAlign="left">
@@ -76,7 +76,7 @@ export default function Footer() {
                     </AccordionPanel>
                 </AccordionItem>
 
-                <AccordionItem>
+                <AccordionItem border="none">
                     <h2>
                         <AccordionButton>
                             <Box as="span" flex="1" textAlign="left">
@@ -92,7 +92,7 @@ export default function Footer() {
                     </AccordionPanel>
                 </AccordionItem>
 
-                <AccordionItem>
+                <AccordionItem border="none">
                     <h2>
                         <AccordionButton>
                             <Box as="span" flex="1" textAlign="left">
