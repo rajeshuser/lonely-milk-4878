@@ -1,18 +1,30 @@
 import { Box, Spinner, SimpleGrid, Heading } from "@chakra-ui/react";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useContext } from "react";
 import { appContext } from "../Contexts/AppContext";
 import { useState } from "react";
 import ProductCard from "./ProductCard";
 import Pagination from "./Pagination";
+import FilterSortSearch from "./FilterSortSearch";
 
 export default function Products() {
     const { baseURL } = useContext(appContext);
     const [requestStatus, setRequestStatus] = useState("success");
     const [products, setProducts] = useState(dummyProducts);
     const { option } = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const handleSearchParams = (updatedSearchParams) => {
+        let newSearchParams = {};
+        for (let [param, value] of searchParams) {
+            newSearchParams = { ...newSearchParams, [param]: value };
+        }
+        newSearchParams = { ...newSearchParams, ...updatedSearchParams };
+        setSearchParams(newSearchParams);
+    };
+
     useEffect(() => {
         return;
         setRequestStatus("loading");
@@ -22,7 +34,7 @@ export default function Products() {
                 let response = await axios({
                     method: "get",
                     baseURL,
-                    url: "/products",
+                    url: `/products?${searchParams.toString()}`,
                 });
                 setRequestStatus("success");
                 setProducts(response.data);
@@ -30,7 +42,7 @@ export default function Products() {
                 setRequestStatus("error");
             }
         }
-    }, []);
+    }, [searchParams]);
 
     if (requestStatus === "loading") {
         return <Spinner margin="100px" />;
@@ -40,12 +52,13 @@ export default function Products() {
         return (
             <Box>
                 <Heading>{option[0].toUpperCase() + option.substring(1)}</Heading>
+                <FilterSortSearch handleSearchParams={handleSearchParams} />
                 <SimpleGrid minHeight="70vh" columns={4} spacing="5px" margin="10px">
                     {products.map((product) => (
                         <ProductCard {...product} />
                     ))}
                 </SimpleGrid>
-                <Pagination />
+                <Pagination handleSearchParams={handleSearchParams} />
             </Box>
         );
     }

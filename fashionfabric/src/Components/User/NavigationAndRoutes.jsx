@@ -14,18 +14,18 @@ const links = [
         presentation: <Image src=".../Resources/logo.png" />,
     },
     {
-        to: "/products/gifts",
+        to: "/products/gifts?category=gifts",
         presentation: "Gifts",
     },
-    { to: "/products/new", presentation: "New" },
-    { to: "/products/women", presentation: "Women" },
-    { to: "/products/men", presentation: "Men" },
-    { to: "/products/children", presentation: "Children" },
+    { to: "/products/new?isNew=true", presentation: "New" },
+    { to: "/products/women?gender=women", presentation: "Women" },
+    { to: "/products/men?gender=men", presentation: "Men" },
+    { to: "/products/children?ageGroup=children", presentation: "Children" },
     {
-        to: "/products/outerwear",
+        to: "/products/outerwear?isOuterwear=true",
         presentation: "Outerwear",
     },
-    { to: "/products/bags", presentation: "Bags" },
+    { to: "/products/bags?category=bags", presentation: "Bags" },
     {
         to: "/account",
         presentation: <Icon as={VscAccount} boxSize={10} />,
@@ -35,14 +35,6 @@ const links = [
         presentation: <Icon as={AiOutlineShoppingCart} boxSize={10} />,
     },
 ];
-
-// GIFTS
-// NEW
-// WOMEN
-// MEN
-// CHILDREN
-// OUTERWEAR
-// BAGS
 
 const routes = [
     {
