@@ -15,21 +15,21 @@ export default function Home() {
             <HStack justifyContent="center" alignItems="center">
                 <Heading
                     size="md"
-                    onClick={() => navigate("/women?category=scarves")}
+                    onClick={() => navigate("/products/women?category=scarves")}
                     _hover={{ cursor: "pointer" }}
                 >
                     Scarves
                 </Heading>
                 <Heading
                     size="md"
-                    onClick={() => navigate("/men?category=coats")}
+                    onClick={() => navigate("/products/men?category=coats")}
                     _hover={{ cursor: "pointer" }}
                 >
                     Men's Coats and Jakcets
                 </Heading>
                 <Heading
                     size="md"
-                    onClick={() => navigate("/women?category=coats")}
+                    onClick={() => navigate("/products/women?category=coats")}
                     _hover={{ cursor: "pointer" }}
                 >
                     Women's Coats and Jackets
@@ -39,28 +39,28 @@ export default function Home() {
             <Box>
                 <Heading
                     size="md"
-                    onClick={() => navigate("/women?category=sneaker")}
+                    onClick={() => navigate("/products/women?category=sneaker")}
                     _hover={{ cursor: "pointer" }}
                 >
                     WOMEN' SNEAKERS
                 </Heading>
                 <Heading
                     size="md"
-                    onClick={() => navigate("/men?category=sneaker")}
+                    onClick={() => navigate("/products/men?category=sneaker")}
                     _hover={{ cursor: "pointer" }}
                 >
                     MEN'S SNEAKERS
                 </Heading>
                 <Heading
                     size="md"
-                    onClick={() => navigate("/women?season=winter")}
+                    onClick={() => navigate("/products/women?season=winter")}
                     _hover={{ cursor: "pointer" }}
                 >
                     WOMEN'S WINTER EDIT
                 </Heading>
                 <Heading
                     size="md"
-                    onClick={() => navigate("/men?season=winter")}
+                    onClick={() => navigate("/products/men?season=winter")}
                     _hover={{ cursor: "pointer" }}
                 >
                     MEN'S WINTER EDIT
@@ -71,14 +71,14 @@ export default function Home() {
                 <Heading size="sm">Take a Leap</Heading>
                 <Heading
                     size="md"
-                    onClick={() => navigate("/gifts")}
+                    onClick={() => navigate("/products/gifts")}
                     _hover={{ cursor: "pointer" }}
                 >
                     Year Of The Rabbit Gifting
                 </Heading>
                 <Heading
                     size="sm"
-                    onClick={() => navigate("/gifts?gender=women")}
+                    onClick={() => navigate("/products/gifts?gender=women")}
                     _hover={{ cursor: "pointer" }}
                 >
                     <Icon as={AiOutlineArrowRight} />
@@ -86,7 +86,7 @@ export default function Home() {
                 </Heading>
                 <Heading
                     size="sm"
-                    onClick={() => navigate("/gifts?gender=men")}
+                    onClick={() => navigate("/products/gifts?gender=men")}
                     _hover={{ cursor: "pointer" }}
                 >
                     <Icon as={AiOutlineArrowRight} />

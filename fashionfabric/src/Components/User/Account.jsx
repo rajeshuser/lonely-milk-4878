@@ -18,6 +18,10 @@ import {
     Text,
     Spinner,
 } from "@chakra-ui/react";
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
+import User from "./User";
+import Favourites from "./Favourites";
+import Orders from "./Orders";
 import axios from "axios";
 
 function isFormValid(formData, setInputValidatorMessage) {
@@ -48,10 +52,9 @@ function isFormValid(formData, setInputValidatorMessage) {
     return true;
 }
 
-function AccountFormModal() {
+function AccountFormModal({ baseURL, signInUser }) {
     const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
     const [InputValidatorMessage, setInputValidatorMessage] = useState("I am input validator");
-    const { baseURL, putUserInLocalStorage } = useContext(appContext);
     const initialFormData = {
         firstName: "",
         lastName: "",
@@ -87,7 +90,7 @@ function AccountFormModal() {
                 });
                 setFormData(initialFormData);
                 onClose();
-                putUserInLocalStorage(formData);
+                signInUser(formData);
             } catch (error) {
                 console.log(error);
             }
@@ -150,27 +153,97 @@ function AccountFormModal() {
     );
 }
 
-function AccountEmailModal() {
+function AccountEmailModal({ baseURL, setUserSearch, passEmail }) {
     const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
-    const [responseStatus, setResponseStatus] = useState("loading");
+    const [responseStatus, setResponseStatus] = useState("success");
     const [doesUserExist, setDoesUserExist] = useState(false);
+    const [email, setEmail] = useState("");
 
-	async function searchUser() {
+    async function searchUser() {
+        try {
+            let response = await axios({ method: "get", baseURL, url: `/users?email=${email}` });
+            console.log(response);
+            if (response.data.length === 1) {
+                setDoesUserExist(true);
+                setUserSearch("emailExist");
+                passEmail(response.data[0].email);
+                onClose();
+            } else {
+                setUserSearch("emailDoesNotExist");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
-	}
-	
     return responseStatus === "loading" ? (
         <Spinner />
     ) : responseStatus === "error" ? (
         <Text>Failed</Text>
     ) : responseStatus === "success" ? (
-        <Modal isOpen={isOpen} onClose={onClose} bg="green">
+        <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent alignItems="center">
                 <ModalHeader>Account</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody as={VStack} spacing="10px" width="80%">
-                    Modal Body
+                    <Input
+                        type="email"
+                        placeholder="Email"
+                        onChange={({ target: { value } }) => setEmail(value)}
+                    />
+                </ModalBody>
+                <ModalFooter>
+                    <Button colorScheme="blue" onClick={searchUser}>
+                        Check Account
+                    </Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+    ) : null;
+}
+
+function AccountPasswordModal({ setUserSearch, email, baseURL, signInUser }) {
+    const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
+    const [responseStatus, setResponseStatus] = useState("success");
+    const [password, setPassword] = useState(null);
+
+    async function searchUser() {
+        try {
+            let response = await axios({
+                method: "get",
+                baseURL,
+                url: `/users?email=${email}&password=${password}`,
+            });
+            if (response.data.length === 1) {
+                setUserSearch("passwordIsCorrect");
+                signInUser(response.data[0]);
+                onClose();
+            } else {
+                console.log(response.data);
+                alert("Wrong password");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    return responseStatus === "loading" ? (
+        <Spinner />
+    ) : responseStatus === "error" ? (
+        <Text>Failed</Text>
+    ) : responseStatus === "success" ? (
+        <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent alignItems="center">
+                <ModalHeader>Account</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody as={VStack} spacing="10px" width="80%">
+                    <Input
+                        type="password"
+                        placeholder="Password"
+                        onChange={({ target: { value } }) => setPassword(value)}
+                    />
                 </ModalBody>
                 <ModalFooter>
                     <Button colorScheme="blue" onClick={searchUser}>
@@ -182,15 +255,67 @@ function AccountEmailModal() {
     ) : null;
 }
 
-function AccountDetails() {
-    return <h1>Hey Boy</h1>;
+function AccountDetails(user) {
+    return (
+        <Tabs
+            width="70vw"
+            height="fit-content"
+            minHeight="80vh"
+            border="1px"
+            borderRadius="20px"
+            margin="10px"
+            padding="10px"
+            isFitted
+            variant="enclosed"
+            size="lg"
+            align="center"
+        >
+            <TabList>
+                <Tab _selected={{ fontWeight: "bolder", fontSize: "2xl" }}>Profile</Tab>
+                <Tab _selected={{ fontWeight: "bolder", fontSize: "2xl" }}>Favourites</Tab>
+                <Tab _selected={{ fontWeight: "bolder", fontSize: "2xl" }}>Orders</Tab>
+            </TabList>
+
+            <TabPanels>
+                <TabPanel>
+                    <User user={user} />
+                </TabPanel>
+                <TabPanel>
+                    <Favourites user={user} />
+                </TabPanel>
+                <TabPanel>
+                    <Orders user={user} />
+                </TabPanel>
+            </TabPanels>
+        </Tabs>
+    );
 }
 
 export default function Account() {
-    const { user } = useContext(appContext);
+    const { baseURL, user, signInUser } = useContext(appContext);
+    const [userSearch, setUserSearch] = useState(user);
+    const [email, setEmail] = useState(null);
+
     return (
         <Center minHeight="70vh">
-            {user === null ? <AccountFormModal /> : <AccountDetails />}
+            {userSearch === null ? (
+                <AccountEmailModal
+                    setUserSearch={setUserSearch}
+                    baseURL={baseURL}
+                    passEmail={(email) => setEmail(email)}
+                />
+            ) : userSearch === "emailExist" ? (
+                <AccountPasswordModal
+                    setUserSearch={setUserSearch}
+                    email={email}
+                    baseURL={baseURL}
+                    signInUser={signInUser}
+                />
+            ) : userSearch === "emailDoesNotExist" ? (
+                <AccountFormModal baseURL={baseURL} signInUser={signInUser} />
+            ) : userSearch === "passwordIsCorrect" || typeof userSearch === "object" ? (
+                <AccountDetails user={user} />
+            ) : null}
         </Center>
     );
 }

@@ -2,16 +2,18 @@ import { NavLink, Route, Routes } from "react-router-dom";
 import { Image, Icon, HStack, Link, Box, Divider } from "@chakra-ui/react";
 import { VscAccount } from "react-icons/vsc";
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import { BsKey } from "react-icons/bs";
 import Home from "./Home";
 import Products from "./Products";
 import Product from "./Product";
 import Account from "./Account";
+import Admin from "../Admin/Admin";
 import Cart from "./Cart";
-
+import logo from "../../Resources/logo.png";
 const links = [
     {
         to: "/",
-        presentation: <Image src=".../Resources/logo.png" />,
+        presentation: <Image src={logo} width="200%" />,
     },
     {
         to: "/products/gifts?category=gifts",
@@ -29,6 +31,10 @@ const links = [
     {
         to: "/account",
         presentation: <Icon as={VscAccount} boxSize={10} />,
+    },
+    {
+        to: "/admin",
+        presentation: <Icon as={BsKey} boxSize={10} />,
     },
     {
         to: "/cart",
@@ -54,6 +60,10 @@ const routes = [
         element: <Account />,
     },
     {
+        path: "/admin",
+        element: <Admin />,
+    },
+    {
         path: "/cart",
         element: <Cart />,
     },
@@ -65,7 +75,7 @@ export default function NavigationAndRoutes() {
         fontWeight: "bold",
         textShadow: "0px 0px 3px white",
         textDecoration: "none",
-        width: "8%",
+        width: "10%",
     };
     const defaultLinkStyle = { color: "white", textDecoration: "none", width: "8%" };
 

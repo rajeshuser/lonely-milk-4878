@@ -1,0 +1,56 @@
+componenet tree of the project
+
+App:
+	navigation:
+		logo
+		navOptions
+		account
+		cart
+	body
+	footer
+
+following are not being rendered:
+	<img src=".../*/*.***"/>
+	<img src="c:/.../*/*.***"/>
+	<video src=".../*/*.***"/ autoplay>
+
+
+api data: Product.jsx, Products.jsx, features, user cart
+
+dummyData Vs downloadedData
+
+storages: variableStorage(discard), localStoarge(discard), serverStorage(consider)
+
+URL:
+	STAIC-SEGMENT
+	DYNAMIC-SEGMENT
+	MANDATORY-SEGMENT
+	OPTIONAL-SEGMENT
+
+USER: 
+	id: <number>
+	firstName: <string>
+	lastName: <string>
+	image: <string>
+	phone: <number>
+	email: <string>
+	address: <string>
+	password: <string>
+	cart: <[[id, quantity],...]>
+	favourites: <[id,...]>
+	orders: <[[id, quantity],...]>
+
+PRODUCT:
+	id: <number>
+	name: <string>
+	price: <numebr>
+	color: <string>
+	category: <string>
+	style: <string>
+	size: <string>
+	material: <string>
+	gender: <string>
+	ageGroup: <string>
+	season: <string>
+	images: <string>
+	description: <string>

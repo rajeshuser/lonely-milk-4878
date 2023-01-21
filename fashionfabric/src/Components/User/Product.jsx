@@ -82,7 +82,7 @@ function Recommendations() {
 export default function Product() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { baseURL } = useContext(appContext);
+    const { baseURL, user } = useContext(appContext);
     const [product, setProduct] = useState(dummyProduct);
     const [requestStatus, setRequestStatus] = useState("success");
 
@@ -106,6 +106,83 @@ export default function Product() {
             }
         }
     }, []);
+
+    function handleAddToCart() {
+        if (user === null) {
+            alert("Please login to add in cart");
+            navigate("/account");
+        } else {
+            addProductInUserCart();
+            async function addProductInUserCart() {
+                // cart = [[id, quantity], ...]
+
+                let getResponse = await axios({
+                    method: "get",
+                    baseURL,
+                    ur: `users/${user.id}`,
+                });
+
+                let user = getResponse.data;
+
+                const cart = user.cart;
+                for (let [id] of cart) {
+                    if (id === product.id) {
+                        alert("Product is already in the cart");
+                        return;
+                    }
+                }
+
+                let patchResponse = await axios({
+                    method: "patch",
+                    baseURL,
+                    url: `users/${user.id}`,
+                    headers: {
+                        "content-type": "application/json",
+                    },
+                    data: { cart: [...user.cart, [product.id, 1]] },
+                });
+            }
+        }
+    }
+
+    function handleMakeFavourite() {
+        // how to use make network request offline
+        if (user === null) {
+            alert("Please login to make favourite");
+            navigate("/account");
+        } else {
+            addProductInUserFavourites();
+            async function addProductInUserFavourites() {
+                // favourites = [id, ...]
+
+                let getResponse = await axios({
+                    method: "get",
+                    baseURL,
+                    url: `users/${user.id}`,
+                });
+
+                let user = getResponse.data;
+
+                const favourites = user.favourites;
+                for (let id of favourites) {
+                    if (id === product.id) {
+                        alert("Product is already in favourites");
+                        return;
+                    }
+                }
+
+                let patchResponse = await axios({
+                    method: "patch",
+                    baseURL,
+                    url: `users/${user.id}`,
+                    headers: {
+                        "content-type": "application/json",
+                    },
+                    data: { favourites: [...user.cart, [product.id, 1]] },
+                });
+            }
+        }
+    }
 
     return requestStatus === "loading" ? (
         <Spinner />
@@ -132,12 +209,7 @@ export default function Product() {
                         <Text>{capitalize(product.category)}</Text>
                     </HStack>
                     <Box alignSelf="flex-end" paddingRight="100px">
-                        <MdFavoriteBorder
-                            onClick={() => {
-                                alert("Please login to make favourite");
-                                navigate("/account");
-                            }}
-                        />
+                        <MdFavoriteBorder onClick={handleMakeFavourite} />
                     </Box>
                     <Heading fontSize="xl">{capitalize(product.name)}</Heading>
                     <Text>${product.price}</Text>
@@ -159,10 +231,7 @@ export default function Product() {
                             color="white"
                             backgroundColor="black"
                             _hover={{ textShadow: "0 0 5px white", fontWeight: "bold" }}
-                            onClick={() => {
-                                alert("Please login to add in cart");
-                                navigate("/account");
-                            }}
+                            onClick={handleAddToCart}
                         >
                             Add To Cart
                         </Button>
