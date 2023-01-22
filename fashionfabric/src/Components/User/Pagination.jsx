@@ -3,7 +3,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 
 export default function Pagination(props) {
-    const { active = 3, limit = 5, total = 100, handleSearchParams } = props;
+    const { active = 1, limit = 5, total = 100, handleSearchParams } = props;
     const totalButtons = Math.ceil(total / limit);
     const countOfVisibleButtons = 5;
     const [activeButton, setActiveButton] = useState(active);
@@ -27,7 +27,7 @@ export default function Pagination(props) {
     }
 
     const changeActiveButton = (newActiveButton) => {
-        if (activeButton === 1 || activeButton === totalButtons) {
+        if (activeButton < 1 || activeButton > totalButtons) {
             return;
         }
 

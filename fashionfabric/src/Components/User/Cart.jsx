@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Heading, SimpleGrid } from "@chakra-ui/react";
+import { Heading, SimpleGrid, Box, Button, HStack, border, transition } from "@chakra-ui/react";
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { appContext } from "../Contexts/AppContext";
@@ -28,27 +28,53 @@ export default function Cart() {
             let string = "";
             for (let [id] of cartProducts) {
                 if (cartProducts.length > 1) string += "&";
-                string += "id" + id;
+                string += "id=" + id;
             }
+            return string;
         }
 
         async function getCartProducts() {
             let response = await axios({
                 method: "get",
                 baseURL,
-                url: `/users?${formatAsQueryParams(user.cart)}`,
+                url: `/products?${formatAsQueryParams(user.cart)}`,
             });
             const cartProducts = response.data;
+            addQuantityKey(cartProducts, user);
+            function addQuantityKey(cartProducts, user) {
+                for (let i = 0; i < user.cart; i++) {
+                    // adding the key-value "quantity:number" in each "orderedProduct"
+                    cartProducts[i].quantity = user.cary[1];
+                }
+            }
             setCartProducts(cartProducts);
         }
     }, []);
 
     return (
-        <SimpleGrid minHeight="70vh" columns={4} spacing="5px" margin="10px">
-            {cartProducts.map((product) => (
-                <ProductCard {...product} showCartButtons={true}/>
-            ))}
-        </SimpleGrid>
+        <Box>
+            <HStack justifyContent="space-around" paddingTop="50px">
+                <Heading>Your Cart</Heading>
+                <Button
+                    margin="20px"
+                    backgroundColor="gold"
+                    // transition="color 1s ease-out"
+                    _hover={{
+                        backgroundColor: "yellow",
+                        border: "1px solid black",
+                        // position: "relative",
+                    }}
+                    onClick={() => navigate("/checkout")}
+                >
+                    Buy Now
+                </Button>
+            </HStack>
+            <SimpleGrid minHeight="70vh" columns={4} spacing="5px" margin="10px">
+                {cartProducts.map((product) => (
+                    <ProductCard {...product} showCartButtons={true} />
+                ))}
+            </SimpleGrid>
+        </Box>
     );
 }
 

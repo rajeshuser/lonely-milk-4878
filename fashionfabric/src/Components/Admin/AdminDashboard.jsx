@@ -1,67 +1,67 @@
-import { Box, Spinner, SimpleGrid, Heading } from "@chakra-ui/react";
+import { Box, Heading, SimpleGrid, Stack } from "@chakra-ui/react";
+import ProductCard from "../User/ProductCard";
+import ProductCardForAdmin from "./ProductCardForAdmin";
+import Pagination from "../User/Pagination";
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useContext } from "react";
 import { appContext } from "../Contexts/AppContext";
-import { useState } from "react";
-import ProductCard from "./ProductCard";
-import Pagination from "./Pagination";
-import FilterSortSearch from "./FilterSortSearch";
+import CRUDOperationsBox from "./CRUDOperationsBox";
 
-export default function Products() {
-    const { baseURL } = useContext(appContext);
-    const [requestStatus, setRequestStatus] = useState("success");
+export default function AdminDashboard() {
     const [products, setProducts] = useState(dummyProducts);
-    const { option } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
+    const { baseURL } = useContext(appContext);
+	const [refresh, setRefresh] = useState({});
 
-    const handleSearchParams = (updatedSearchParams) => {
-        let newSearchParams = {};
-        for (let [param, value] of searchParams) {
-            newSearchParams = { ...newSearchParams, [param]: value };
-        }
-        newSearchParams = { ...newSearchParams, ...updatedSearchParams };
-        setSearchParams(newSearchParams);
-    };
+    function getQueryParams() {
+        if (searchParams.toString() === "") return "";
+        else return "?" + searchParams.toString();
+    }
 
-    useEffect(() => {
-        return;
-        setRequestStatus("loading");
-        getProducts();
-        async function getProducts() {
-            try {
+	console.log(refresh)
+    useEffect(
+        function () {
+            // return;
+            getProducts();
+            async function getProducts() {
                 let response = await axios({
                     method: "get",
                     baseURL,
-                    url: `/products?${searchParams.toString()}`,
+                    url: `/products${getQueryParams()}`,
                 });
-                setRequestStatus("success");
                 setProducts(response.data);
-            } catch (error) {
-                setRequestStatus("error");
             }
-        }
-    }, [searchParams]);
+        },
+        [searchParams, refresh]
+    );
 
-    if (requestStatus === "loading") {
-        return <Spinner margin="100px" />;
-    } else if (requestStatus === "error") {
-        return <h1>Error</h1>;
-    } else if (requestStatus === "success") {
-        return (
-            <Box>
-                <Heading margin="20px">{option[0].toUpperCase() + option.substring(1)}</Heading>
-                <FilterSortSearch handleSearchParams={handleSearchParams} />
-                <SimpleGrid minHeight="70vh" columns={4} spacing="5px" margin="10px">
+    function handleSearchParams({ _page, _limit }) {
+        setSearchParams((searchParams) => ({ ...searchParams, _page, _limit }));
+    }
+
+    return (
+        <Box minHeight="70vh" width="80%" margin="auto">
+            <Heading margin="10px">Admin Dashboard</Heading>
+            <Stack direction={["column", "column", "row", "row", "row"]} spacing="30px">
+                <CRUDOperationsBox flex="1" setRefresh={setRefresh}/>
+                <SimpleGrid
+                    minHeight="70vh"
+                    flex="3"
+                    columns={[1, 2, 3]}
+                    spacing="5px"
+                    margin="10px"
+                >
                     {products.map((product) => (
-                        <ProductCard {...product} />
+                        <ProductCardForAdmin {...product} />
                     ))}
                 </SimpleGrid>
-                <Pagination handleSearchParams={handleSearchParams} />
-            </Box>
-        );
-    }
+            </Stack>
+            <Pagination handleSearchParams={handleSearchParams} />
+        </Box>
+    );
 }
 
 var dummyProducts = [
