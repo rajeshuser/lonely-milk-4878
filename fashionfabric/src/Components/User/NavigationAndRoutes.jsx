@@ -9,6 +9,8 @@ import Product from "./Product";
 import Account from "./Account";
 import Admin from "../Admin/Admin";
 import Cart from "./Cart";
+import Checkout from "./Checkout";
+import AdminDashboard from "../Admin/AdminDashboard";
 import logo from "../../Resources/logo.png";
 const links = [
     {
@@ -66,6 +68,15 @@ const routes = [
     {
         path: "/cart",
         element: <Cart />,
+    },
+    {
+        path: "/checkout",
+        element: <Checkout />,
+        AdminDashboard,
+    },
+    {
+        path: "/admindashboard",
+        element: <AdminDashboard />,
     },
 ];
 
