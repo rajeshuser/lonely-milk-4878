@@ -20,7 +20,6 @@ export default function Cart() {
     }
 
     useEffect(() => {
-        return;
         getCartProducts();
 
         function formatAsQueryParams(cartProducts) {
@@ -34,20 +33,30 @@ export default function Cart() {
         }
 
         async function getCartProducts() {
+            let updatedUser = (
+                await axios({
+                    method: "get",
+                    baseURL,
+                    url: `/users/${user.id}`,
+                })
+            ).data;
+
             let response = await axios({
                 method: "get",
                 baseURL,
-                url: `/products?${formatAsQueryParams(user.cart)}`,
+                url: `/products?${formatAsQueryParams(updatedUser.cart)}`,
             });
             const cartProducts = response.data;
-            addQuantityKey(cartProducts, user);
-            function addQuantityKey(cartProducts, user) {
-                for (let i = 0; i < user.cart; i++) {
-                    // adding the key-value "quantity:number" in each "orderedProduct"
-                    cartProducts[i].quantity = user.cary[1];
+            addQuantityKey(cartProducts, updatedUser);
+            function addQuantityKey(cartProducts, updatedUser) {
+                for (let i = 0; i < updatedUser.cart.length; i++) {
+                    // adding the key-value "quantity:number" in each "orderedProduct"4
+                    cartProducts[i].quantity = updatedUser.cart[i][1];
                 }
             }
-            setCartProducts(cartProducts);
+
+            console.log(cartProducts);
+            setCartProducts([...cartProducts]);
         }
     }, []);
 
@@ -69,7 +78,7 @@ export default function Cart() {
                     Buy Now
                 </Button>
             </HStack>
-            <SimpleGrid minHeight="70vh" columns={4} spacing="5px" margin="10px">
+            <SimpleGrid minHeight="70vh" columns={[1, 2, 3, 4, 4]} spacing="5px" margin="10px">
                 {cartProducts.map((product) => (
                     <ProductCard {...product} showCartButtons={true} />
                 ))}
@@ -78,105 +87,4 @@ export default function Cart() {
     );
 }
 
-var dummyCartProducts = [
-    {
-        quantity: 3,
-        id: 1,
-        name: "vel quam elementum pulvinar etiam non quam lacus suspendisse faucibus",
-        price: 1150,
-        color: "brown",
-        category: "knitwear",
-        style: "cardigan",
-        size: "xs",
-        material: "wool",
-        gender: "female",
-        ageGroup: "adult",
-        season: "winter",
-        images: [
-            "https://assets.burberry.com/is/image/Burberryltd/EC955983-5422-40AF-AE13-A5FEDBACE6D4?$BBY_V2_ML_1x1$&wid=887&hei=887",
-            "https://assets.burberry.com/is/image/Burberryltd/7F53A08D-9474-42A0-A5AB-1DD2EA0BDDCD?$BBY_V2_SL_1x1$&wid=887&hei=887",
-        ],
-        description:
-            "diam vulputate ut pharetra sit amet aliquam id diam maecenas ultricies mi eget mauris pharetra et ultrices neque ornare aenean euismod elementum nisi quis eleifend quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero enim sed faucibus",
-    },
-    {
-        quantity: 3,
-        id: 2,
-        name: "vel quam elementum pulvinar etiam non quam lacus suspendisse faucibus",
-        price: 1150,
-        color: "brown",
-        category: "knitwear",
-        style: "cardigan",
-        size: "xs",
-        material: "wool",
-        gender: "female",
-        ageGroup: "adult",
-        season: "winter",
-        images: [
-            "https://assets.burberry.com/is/image/Burberryltd/EC955983-5422-40AF-AE13-A5FEDBACE6D4?$BBY_V2_ML_1x1$&wid=887&hei=887",
-            "https://assets.burberry.com/is/image/Burberryltd/7F53A08D-9474-42A0-A5AB-1DD2EA0BDDCD?$BBY_V2_SL_1x1$&wid=887&hei=887",
-        ],
-        description:
-            "diam vulputate ut pharetra sit amet aliquam id diam maecenas ultricies mi eget mauris pharetra et ultrices neque ornare aenean euismod elementum nisi quis eleifend quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero enim sed faucibus",
-    },
-    {
-        quantity: 3,
-        id: 3,
-        name: "vel quam elementum pulvinar etiam non quam lacus suspendisse faucibus",
-        price: 1150,
-        color: "brown",
-        category: "knitwear",
-        style: "cardigan",
-        size: "xs",
-        material: "wool",
-        gender: "female",
-        ageGroup: "adult",
-        season: "winter",
-        images: [
-            "https://assets.burberry.com/is/image/Burberryltd/EC955983-5422-40AF-AE13-A5FEDBACE6D4?$BBY_V2_ML_1x1$&wid=887&hei=887",
-            "https://assets.burberry.com/is/image/Burberryltd/7F53A08D-9474-42A0-A5AB-1DD2EA0BDDCD?$BBY_V2_SL_1x1$&wid=887&hei=887",
-        ],
-        description:
-            "diam vulputate ut pharetra sit amet aliquam id diam maecenas ultricies mi eget mauris pharetra et ultrices neque ornare aenean euismod elementum nisi quis eleifend quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero enim sed faucibus",
-    },
-    {
-        quantity: 3,
-        id: 4,
-        name: "vel quam elementum pulvinar etiam non quam lacus suspendisse faucibus",
-        price: 1150,
-        color: "brown",
-        category: "knitwear",
-        style: "cardigan",
-        size: "xs",
-        material: "wool",
-        gender: "female",
-        ageGroup: "adult",
-        season: "winter",
-        images: [
-            "https://assets.burberry.com/is/image/Burberryltd/EC955983-5422-40AF-AE13-A5FEDBACE6D4?$BBY_V2_ML_1x1$&wid=887&hei=887",
-            "https://assets.burberry.com/is/image/Burberryltd/7F53A08D-9474-42A0-A5AB-1DD2EA0BDDCD?$BBY_V2_SL_1x1$&wid=887&hei=887",
-        ],
-        description:
-            "diam vulputate ut pharetra sit amet aliquam id diam maecenas ultricies mi eget mauris pharetra et ultrices neque ornare aenean euismod elementum nisi quis eleifend quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero enim sed faucibus",
-    },
-    {
-        quantity: 3,
-        id: 5,
-        name: "vel quam elementum pulvinar etiam non quam lacus suspendisse faucibus",
-        price: 1150,
-        color: "brown",
-        category: "knitwear",
-        style: "cardigan",
-        size: "xs",
-        material: "wool",
-        gender: "female",
-        ageGroup: "adult",
-        season: "winter",
-        images: [
-            "https://assets.burberry.com/is/image/Burberryltd/EC955983-5422-40AF-AE13-A5FEDBACE6D4?$BBY_V2_ML_1x1$&wid=887&hei=887",
-            "https://assets.burberry.com/is/image/Burberryltd/7F53A08D-9474-42A0-A5AB-1DD2EA0BDDCD?$BBY_V2_SL_1x1$&wid=887&hei=887",
-        ],
-        description:
-            "diam vulputate ut pharetra sit amet aliquam id diam maecenas ultricies mi eget mauris pharetra et ultrices neque ornare aenean euismod elementum nisi quis eleifend quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero enim sed faucibus",
-    },
-];
+var dummyCartProducts = [];

@@ -16,12 +16,10 @@ const dummyUser = {
     id: 1,
 };
 
-export default function User({ user }) {
-    const { firstName, lastName, phone, email, address, image } = dummyUser;
+export default function User({user}) {
+    const { firstName, lastName, phone, email, address, image } = user ? user : dummyUser;
     return (
-        <Card
-            _hover={{ cursor: "pointer" }}
-        >
+        <Card _hover={{ cursor: "pointer" }}>
             <CardHeader as={Heading} fontSize="xl">
                 {firstName + " " + lastName}
             </CardHeader>

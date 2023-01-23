@@ -17,16 +17,16 @@ export default function Products() {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const handleSearchParams = (updatedSearchParams) => {
-        let newSearchParams = {};
-        for (let [param, value] of searchParams) {
-            newSearchParams = { ...newSearchParams, [param]: value };
-        }
-        newSearchParams = { ...newSearchParams, ...updatedSearchParams };
+        // let newSearchParams = {};
+        // for (let [param, value] of searchParams) {
+        //     newSearchParams = { ...newSearchParams, [param]: value };
+        // }
+        let newSearchParams = { ...searchParams, ...updatedSearchParams };
         setSearchParams(newSearchParams);
     };
 
     useEffect(() => {
-        return;
+        // return;
         setRequestStatus("loading");
         getProducts();
         async function getProducts() {
@@ -53,12 +53,26 @@ export default function Products() {
             <Box>
                 <Heading margin="20px">{option[0].toUpperCase() + option.substring(1)}</Heading>
                 <FilterSortSearch handleSearchParams={handleSearchParams} />
-                <SimpleGrid minHeight="70vh" columns={4} spacing="5px" margin="10px">
-                    {products.map((product) => (
-                        <ProductCard {...product} />
-                    ))}
-                </SimpleGrid>
-                <Pagination handleSearchParams={handleSearchParams} />
+                {products.length === 0 ? (
+                    <Heading minHeight="50vh" paddingTop="25vh">
+                        Nothing is there on the page
+                    </Heading>
+                ) : (
+                    <SimpleGrid
+                        minHeight="70vh"
+                        columns={[1, 2, 3, 4, 4]}
+                        spacing="5px"
+                        margin="10px"
+                    >
+                        {products.map((product) => (
+                            <ProductCard {...product} />
+                        ))}
+                    </SimpleGrid>
+                )}
+                <Pagination
+                    active={+searchParams.get("_page")}
+                    handleSearchParams={handleSearchParams}
+                />
             </Box>
         );
     }

@@ -51,7 +51,6 @@ function Recommendations() {
     const { baseURL } = useContext(appContext);
     const [requestStatus, setRequestStatus] = useState("success");
     useEffect(() => {
-        return;
         setRequestStatus("loading");
         getRecommendations();
         async function getRecommendations() {
@@ -59,9 +58,8 @@ function Recommendations() {
                 const response = await axios({
                     method: "get",
                     baseURL,
-                    url: "?id=1&id=1&id=2&id=3&id=4&id=5",
+                    url: "/products?id=1&id=2&id=3&id=4&id=5",
                 });
-                console.log(response.data);
                 setRecommendations(response.data);
                 setRequestStatus("success");
             } catch (error) {
@@ -80,6 +78,7 @@ function Recommendations() {
 }
 
 export default function Product() {
+    // how to subscribe to browserURL
     const { id } = useParams();
     const navigate = useNavigate();
     const { baseURL, user } = useContext(appContext);
@@ -87,7 +86,7 @@ export default function Product() {
     const [requestStatus, setRequestStatus] = useState("success");
 
     useEffect(() => {
-        return;
+        // return;
         setRequestStatus("loading");
         getProduct();
         async function getProduct() {
@@ -116,31 +115,37 @@ export default function Product() {
             async function addProductInUserCart() {
                 // cart = [[id, quantity], ...]
 
+                console.log(user)
                 let getResponse = await axios({
                     method: "get",
                     baseURL,
-                    ur: `users/${user.id}`,
+                    url: `/users/${user.id}`,
                 });
 
-                let user = getResponse.data;
+                let updatedUser = getResponse.data;
 
-                const cart = user.cart;
+                const cart = updatedUser.cart;
+
                 for (let [id] of cart) {
                     if (id === product.id) {
                         alert("Product is already in the cart");
                         return;
                     }
                 }
-
+				
                 let patchResponse = await axios({
                     method: "patch",
                     baseURL,
-                    url: `users/${user.id}`,
+                    url: `users/${updatedUser.id}`,
                     headers: {
                         "content-type": "application/json",
                     },
-                    data: { cart: [...user.cart, [product.id, 1]] },
+                    data: { cart: [...updatedUser.cart, [product.id, 1]] },
                 });
+
+                if (patchResponse.status === 200) {
+                    alert("Product is added to the cart");
+                }
             }
         }
     }
@@ -154,16 +159,15 @@ export default function Product() {
             addProductInUserFavourites();
             async function addProductInUserFavourites() {
                 // favourites = [id, ...]
-
                 let getResponse = await axios({
                     method: "get",
                     baseURL,
                     url: `users/${user.id}`,
                 });
 
-                let user = getResponse.data;
+                let updatedUser = getResponse.data;
 
-                const favourites = user.favourites;
+                const favourites = updatedUser.favourites;
                 for (let id of favourites) {
                     if (id === product.id) {
                         alert("Product is already in favourites");
@@ -174,11 +178,11 @@ export default function Product() {
                 let patchResponse = await axios({
                     method: "patch",
                     baseURL,
-                    url: `users/${user.id}`,
+                    url: `users/${updatedUser.id}`,
                     headers: {
                         "content-type": "application/json",
                     },
-                    data: { favourites: [...user.cart, [product.id, 1]] },
+                    data: { favourites: [...updatedUser.favourites, product.id] },
                 });
             }
         }

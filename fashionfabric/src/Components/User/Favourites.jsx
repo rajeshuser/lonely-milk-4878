@@ -4,29 +4,42 @@ import axios from "axios";
 import { appContext } from "../Contexts/AppContext";
 import ProductCard from "./ProductCard";
 
-export default function Favourites(user) {
+export default function Favourites({ user }) {
     const { baseURL } = useContext(appContext);
     const [favouriteProducts, setFavouriteProducts] = useState(dummyFavouriteProducts);
 
     useEffect(() => {
-		return;
-        getFavouriteProducts();
+        // return;
+
+        getUser();
+
+        async function getUser() {
+            let response = await axios({
+                method: "get",
+                baseURL,
+                url: `/users/${user.id}`,
+            });
+
+            let updatedUser = response.data;
+            getFavouriteProducts(updatedUser);
+        }
 
         function formatAsQueryParams(favouriteProductsIDs) {
             let string = "";
             for (let id of favouriteProductsIDs) {
                 if (favouriteProductsIDs.length > 1) string += "&";
-                string += "id" + id;
+                string += "id=" + id;
             }
+            return string;
         }
 
-        async function getFavouriteProducts() {
+        async function getFavouriteProducts(user) {
             let response = await axios({
                 method: "get",
                 baseURL,
-                url: `/users?${formatAsQueryParams(user.favourites)}`,
+                url: `/products?${formatAsQueryParams(user.favourites)}`,
             });
-			setFavouriteProducts(response.data);
+            setFavouriteProducts(response.data);
         }
     }, []);
 

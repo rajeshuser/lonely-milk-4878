@@ -6,6 +6,7 @@ import { useState, useReducer } from "react";
 export default function FilterSortSearch({ handleSearchParams }) {
     const initialState = {};
     const [state, dispatcher] = useReducer(updater, initialState);
+	const [searchValue, setSearchValue] = useState("");
 
     function updater(state, { param, value }) {
         if (value === "") {
@@ -22,7 +23,9 @@ export default function FilterSortSearch({ handleSearchParams }) {
             alignItems="center"
             borderWidth="thin"
             borderColor="black"
-            direction="row"
+            width={["30%", "30%", "fit-content", "fit-content", "fit-content"]}
+            margin="auto"
+            direction={["column", "column", "row", "row", "row"]}
         >
             <select
                 onChange={({ target: { value } }) => {
@@ -127,11 +130,16 @@ export default function FilterSortSearch({ handleSearchParams }) {
                     type="search"
                     border="1px"
                     onChange={({ target: { value } }) => {
-                        dispatcher({ param: "q", value });
+						setSearchValue(value);
                     }}
+                    minWidth="100px"
                     padding="5px 10px"
                 />
-                <SearchIcon boxSize="10%" _hover={{ color: "blue", cursor: "pointer"}} />
+                <SearchIcon
+                    boxSize="20px"
+                    onClick={() => dispatcher({ param: "q", value: searchValue })}
+                    _hover={{ color: "blue", cursor: "pointer" }}
+                />
             </HStack>
         </Stack>
     );

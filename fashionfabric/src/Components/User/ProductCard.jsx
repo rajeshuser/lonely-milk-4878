@@ -26,7 +26,8 @@ export default function ProductCard(props) {
     } = props;
     const navigate = useNavigate();
     const [imageIndex, setImageIndex] = useState(0);
-    const { user, baseURL } = useContext(appContext);
+    const [countInCart, setCountInCart] = useState(quantity);
+    const { user, baseURL, refreshUser } = useContext(appContext);
 
     const handleQuantityChange = (change) => {
         if (user === null) {
@@ -41,11 +42,11 @@ export default function ProductCard(props) {
                 url: `/users/${user.id}`,
             });
 
-            let user = getResponse.user;
-
-            for (let cartItem of user.cart) {
+            let updatedUser = getResponse.data;
+            for (let cartItem of updatedUser.cart) {
                 if (cartItem[0] === id) {
-                    cartItem[1] += Math.max(1, cartItem[1] + change);
+                    cartItem[1] = Math.max(1, cartItem[1] + change);
+                    setCountInCart(cartItem[1]);
                     break;
                 }
             }
@@ -53,24 +54,36 @@ export default function ProductCard(props) {
             let patchResponse = await axios({
                 method: "patch",
                 baseURL,
-                url: `/users/${user.id}`,
+                url: `/users/${updatedUser.id}`,
                 headers: {
                     "content-type": "application/json",
                 },
-                data: user,
+                data: updatedUser,
             });
+
+            if (patchResponse.status === 200) {
+                refreshUser();
+            }
         }
     };
 
-    const handleRemove = () => {
-        deleteUser();
-        async function deleteUser() {
-            let deleteResponse = await axios({
-                method: "delete",
-                baseURL,
-                url: `/users/${user.id}`,
-            });
-        }
+    const handleRemove = async () => {
+        let getResponse = await axios({
+            method: "get",
+            baseURL,
+            url: `/users/${user.id}`,
+        });
+        const updatedUser = getResponse.data;
+        updatedUser.cart = updatedUser.cart.filter((cartItem) => cartItem[0] !== id);
+        let patchResponse = await axios({
+            method: "patch",
+            baseURL,
+            url: `/users/${updatedUser.id}`,
+            headers: {
+                "content-type": "application/json",
+            },
+            data: updatedUser,
+        });
     };
 
     useEffect(() => {
@@ -96,7 +109,7 @@ export default function ProductCard(props) {
                     {name}
                 </Heading>
                 <Text>${price}</Text>
-                <Text>{quantity === undefined ? "New" : "Quantity: " + quantity}</Text>
+                <Text>{countInCart === undefined ? "New" : "Quantity: " + countInCart}</Text>
                 {showCartButtons ? (
                     <Stack
                         width="100%"

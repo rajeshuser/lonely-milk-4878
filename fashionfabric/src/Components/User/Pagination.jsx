@@ -7,7 +7,14 @@ export default function Pagination(props) {
     const totalButtons = Math.ceil(total / limit);
     const countOfVisibleButtons = 5;
     const [activeButton, setActiveButton] = useState(active);
-    const [startButton, setStartButton] = useState(1);
+
+    const [startButton, setStartButton] = useState(
+        activeButton -
+            ((activeButton % countOfVisibleButtons === 0
+                ? countOfVisibleButtons
+                : activeButton % countOfVisibleButtons) -
+                1)
+    );
     let buttons = [];
     for (let b = startButton; b <= startButton + countOfVisibleButtons - 1; b++) {
         buttons.push(
@@ -27,7 +34,7 @@ export default function Pagination(props) {
     }
 
     const changeActiveButton = (newActiveButton) => {
-        if (activeButton < 1 || activeButton > totalButtons) {
+        if (newActiveButton < 1 || newActiveButton > totalButtons) {
             return;
         }
 
@@ -37,6 +44,7 @@ export default function Pagination(props) {
             activeButton < newActiveButton &&
             activeButton === startButton + countOfVisibleButtons - 1
         ) {
+            console.log("changing start button to", startButton + countOfVisibleButtons);
             setStartButton((startButton) => startButton + countOfVisibleButtons);
         }
 

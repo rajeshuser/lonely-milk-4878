@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 function cartBill(cartProducts) {
     let bill = 0;
     for (let product of cartProducts) {
-        bill += (+product.price) * product.quantity;
+        bill += +product.price * product.quantity;
     }
     return bill;
 }
@@ -30,7 +30,7 @@ function DebitCard() {
     const cardNumberRef = useRef();
     const cardExpirydateRef = useRef();
     const navigate = useNavigate();
-    const { user, baseURL, url } = useContext(appContext);
+    const { user, baseURL } = useContext(appContext);
 
     function isCardDetailsValid() {
         console.log(cardNumberRef.current);
@@ -61,15 +61,16 @@ function DebitCard() {
             return;
         }
         alert("Payment succeessful");
+        moveCartItemsToOrdersItems();
         navigate("/");
     }
 
     async function moveCartItemsToOrdersItems() {
-        let response = axios({ method: "get", baseURL, url: `/users/${user.id}` });
+        let response = await axios({ method: "get", baseURL, url: `/users/${user.id}` });
         let updatedUser = response.data;
-        updatedUser.orders = updatedUser.cart;
+        updatedUser.orders = [...updatedUser.orders, ...updatedUser.cart];
         updatedUser.cart = [];
-        response = axios({
+        let response2 = await axios({
             method: "patch",
             baseURL,
             url: `/users/${updatedUser.id}`,
@@ -116,7 +117,7 @@ export default function Checkout() {
     }
 
     useEffect(() => {
-        return;
+        // return;
         getCartProductsOfUser();
 
         function formatAsQueryParams(cartProducts) {
@@ -142,11 +143,11 @@ export default function Checkout() {
                 url: `/products?${formatAsQueryParams(updatedUser.cart)}`,
             });
             let cartProducts = productsResponse.data;
-            addQuantityKey(cartProducts, user);
-            function addQuantityKey(cartProducts, user) {
-                for (let i = 0; i < user.cart; i++) {
+            addQuantityKey(cartProducts, updatedUser);
+            function addQuantityKey(cartProducts, updatedUser) {
+                for (let i = 0; i < updatedUser.cart.length; i++) {
                     // adding the key-value "quantity:number" in each "orderedProduct"
-                    cartProducts[i].quantity = user.cary[1];
+                    cartProducts[i].quantity = updatedUser.cart[i][1];
                 }
             }
             setCartProducts(cartProducts);
@@ -196,7 +197,7 @@ export default function Checkout() {
                                     {product.quantity}
                                 </Text>
                                 <Text>${+product.price}</Text>
-                                <Text>${product.quantity * (+product.price)}</Text>
+                                <Text>${product.quantity * +product.price}</Text>
                             </ListItem>
                         ))}
                     </OrderedList>

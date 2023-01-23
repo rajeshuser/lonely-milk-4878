@@ -64,7 +64,7 @@ function AccountFormModal({ baseURL, signInUser }) {
         password: "",
         cart: [],
         favourites: [],
-        orderHistory: [],
+        orders: [],
     };
     const [formData, setFormData] = useState(initialFormData);
 
@@ -217,6 +217,7 @@ function AccountPasswordModal({ setUserSearch, email, baseURL, signInUser }) {
             });
             if (response.data.length === 1) {
                 setUserSearch("passwordIsCorrect");
+				console.log("user got after password", response.data[0])
                 signInUser(response.data[0]);
                 onClose();
             } else {
@@ -255,7 +256,7 @@ function AccountPasswordModal({ setUserSearch, email, baseURL, signInUser }) {
     ) : null;
 }
 
-function AccountDetails(user) {
+function AccountDetails({user, signOutUser}) {
     return (
         <Tabs
             width="70vw"
@@ -274,6 +275,7 @@ function AccountDetails(user) {
                 <Tab _selected={{ fontWeight: "bolder", fontSize: "2xl" }}>Profile</Tab>
                 <Tab _selected={{ fontWeight: "bolder", fontSize: "2xl" }}>Favourites</Tab>
                 <Tab _selected={{ fontWeight: "bolder", fontSize: "2xl" }}>Orders</Tab>
+                <Tab _selected={{ fontWeight: "bolder", fontSize: "2xl" }}>Exit</Tab>
             </TabList>
 
             <TabPanels>
@@ -286,13 +288,18 @@ function AccountDetails(user) {
                 <TabPanel>
                     <Orders user={user} />
                 </TabPanel>
+                <TabPanel>
+                    <Button colorScheme="orange" width="20%" margin="auto" onClick={signOutUser}>
+                        Signout
+                    </Button>
+                </TabPanel>
             </TabPanels>
         </Tabs>
     );
 }
 
 export default function Account() {
-    const { baseURL, user, signInUser } = useContext(appContext);
+    const { baseURL, user, signInUser, signOutUser } = useContext(appContext);
     const [userSearch, setUserSearch] = useState(user);
     const [email, setEmail] = useState(null);
 
@@ -314,7 +321,7 @@ export default function Account() {
             ) : userSearch === "emailDoesNotExist" ? (
                 <AccountFormModal baseURL={baseURL} signInUser={signInUser} />
             ) : userSearch === "passwordIsCorrect" || typeof userSearch === "object" ? (
-                <AccountDetails user={user} />
+                <AccountDetails user={user} signOutUser={signOutUser}/>
             ) : null}
         </Center>
     );

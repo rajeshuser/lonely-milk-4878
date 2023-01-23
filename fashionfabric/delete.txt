@@ -40,7 +40,7 @@ USER:
 	favourites: <[id,...]>
 	orders: <[[id, quantity],...]>
 
-PRODUCT:
+PRODUCT: (values are present on products page)
 	id: <number>
 	name: <string>
 	price: <numebr>
@@ -51,6 +51,6 @@ PRODUCT:
 	material: <string>
 	gender: <string>
 	ageGroup: <string>
-	season: <string>
+	season: <string> (winter, summer, mansoon)
 	images: <string>
 	description: <string>

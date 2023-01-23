@@ -4,35 +4,42 @@ import axios from "axios";
 import { appContext } from "../Contexts/AppContext";
 import ProductCard from "./ProductCard";
 
-export default function Orders(user) {
+export default function Orders({ user }) {
     const { baseURL } = useContext(appContext);
     const [orderedProducts, setOrderedProducts] = useState(dummyOrderedProducts);
 
     useEffect(() => {
-        return;
+        // return;
         getOrderedProducts();
 
         function formatAsQueryParams(orderedProducts) {
             // orderedProducts = [[id, quantity], ...]
             let string = "";
+            let firstIsSkipped = false;
             for (let [id] of orderedProducts) {
-                if (orderedProducts.length > 1) string += "&";
-                string += "id" + id;
+                if (orderedProducts.length > 1 && firstIsSkipped === true) string += "&";
+                string += "id=" + id;
+                firstIsSkipped = true;
             }
+            return string;
         }
 
         async function getOrderedProducts() {
+            if (user.orders.length === 0) {
+                setOrderedProducts([]);
+                return;
+            }
+			
             let response = await axios({
                 method: "get",
                 baseURL,
-                url: `/users?${formatAsQueryParams(user.orders)}`,
+                url: `/products?${formatAsQueryParams(user.orders)}`,
             });
+            const orderedProducts = response.data.orders;
 
-            const orderedProducts = response.data;
-
-            for (let i = 0; i < user.orders; i++) {
+            for (let i = 0; i < user.orders.length; i++) {
                 // adding the key-value "quantity:number" in each "orderedProduct"
-                orderedProducts[i].quantity = user.orders[1];
+                orderedProducts[i].quantity = user.orders[i][1];
             }
             setOrderedProducts(orderedProducts);
         }
