@@ -184,7 +184,7 @@ export default function Checkout() {
                                 borderBottom="1px solid grey"
                                 padding="10px 0"
                             >
-                                <Text fontWeight="bold">
+                                <Text fontWeight="bold" width="50%" textAlign="left">
                                     {capitalize(product.name).substring(0, 15)}
                                 </Text>
                                 <Text
