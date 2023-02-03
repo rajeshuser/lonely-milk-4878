@@ -1,3 +1,4 @@
+push
 create database
 add commit push
 deploy
