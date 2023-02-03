@@ -21,6 +21,9 @@ dummyData Vs downloadedData
 
 storages: variableStorage(discard), localStoarge(discard), serverStorage(consider)
 
+
+deplpoy
+
 URL:
 	STAIC-SEGMENT
 	DYNAMIC-SEGMENT

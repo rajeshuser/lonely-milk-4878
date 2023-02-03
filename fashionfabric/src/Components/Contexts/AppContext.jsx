@@ -6,7 +6,8 @@ export const appContext = createContext()
 export const AppContextProvider = (props) => {
 	const { children } = props
 	const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")))
-	const baseURL = "http://localhost:3000"
+	// const baseURL = "http://localhost:3000"
+	const baseURL = "https://ffapi.onrender.com"
 
 	async function refreshUser() {
 		let response = await axios({
@@ -23,7 +24,7 @@ export const AppContextProvider = (props) => {
 		setUser(user)
 		localStorage.setItem("user", JSON.stringify(user))
 	}
-
+	
 	const signOutUser = () => {
 		setUser(null)
 		localStorage.removeItem("user")

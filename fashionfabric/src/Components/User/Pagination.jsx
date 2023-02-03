@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function Pagination(props) {
     const { active = 1, limit = 5, total = 100, handleSearchParams } = props;
     const totalButtons = Math.ceil(total / limit);
-    const countOfVisibleButtons = 5;
+    const countOfVisibleButtons = Math.min(5, totalButtons);
     const [activeButton, setActiveButton] = useState(active);
 
     const [startButton, setStartButton] = useState(
@@ -44,7 +44,6 @@ export default function Pagination(props) {
             activeButton < newActiveButton &&
             activeButton === startButton + countOfVisibleButtons - 1
         ) {
-            console.log("changing start button to", startButton + countOfVisibleButtons);
             setStartButton((startButton) => startButton + countOfVisibleButtons);
         }
 
