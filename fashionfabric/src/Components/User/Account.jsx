@@ -181,25 +181,28 @@ function AccountEmailModal({ baseURL, setUserSearch, passEmail }) {
 	) : responseStatus === "error" ? (
 		<Text>Failed</Text>
 	) : responseStatus === "success" ? (
-		<Modal isOpen={isOpen} onClose={onClose}>
-			<ModalOverlay />
-			<ModalContent alignItems="center">
-				<ModalHeader>Account</ModalHeader>
-				<ModalCloseButton />
-				<ModalBody as={VStack} spacing="10px" width="80%">
-					<Input
-						type="email"
-						placeholder="Email"
-						onChange={({ target: { value } }) => setEmail(value)}
-					/>
-				</ModalBody>
-				<ModalFooter>
-					<Button colorScheme="blue" onClick={searchUser}>
-						Check Account
-					</Button>
-				</ModalFooter>
-			</ModalContent>
-		</Modal>
+		<Box>
+			<Button onClick={onOpen}>Sign up</Button>
+			<Modal isOpen={isOpen} onClose={onClose}>
+				<ModalOverlay />
+				<ModalContent alignItems="center">
+					<ModalHeader>Account</ModalHeader>
+					<ModalCloseButton />
+					<ModalBody as={VStack} spacing="10px" width="80%">
+						<Input
+							type="email"
+							placeholder="Email"
+							onChange={({ target: { value } }) => setEmail(value)}
+						/>
+					</ModalBody>
+					<ModalFooter>
+						<Button colorScheme="blue" onClick={searchUser}>
+							Check Account
+						</Button>
+					</ModalFooter>
+				</ModalContent>
+			</Modal>
+		</Box>
 	) : null;
 }
 
@@ -308,10 +311,8 @@ function AccountDetails({ user, signOutUser, setUserSearch }) {
 
 export default function Account() {
 	const { baseURL, user, signInUser, signOutUser } = useContext(appContext);
-	console.log("Account is rendered");
 	const [userSearch, setUserSearch] = useState(user);
 	const [email, setEmail] = useState(null);
-	console.log("Account is rendered and user is", user, userSearch);
 	return (
 		<Center minHeight="70vh">
 			{userSearch === null ? (

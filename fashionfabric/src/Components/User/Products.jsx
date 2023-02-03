@@ -1,4 +1,4 @@
-import { Box, Spinner, SimpleGrid, Heading } from "@chakra-ui/react";
+import { Box, Spinner, SimpleGrid, Heading, HStack } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
@@ -18,7 +18,7 @@ export default function Products() {
 	const [totalCount, setTotalCount] = useState(25);
 
 	const activePage = searchParams.get("_page") === null ? 1 : +searchParams.get("_page");
-	const pageLimit = 5
+	const pageLimit = 5;
 	const handleSearchParams = (updatedSearchParams) => {
 		// let newSearchParams = {};
 		// for (let [param, value] of searchParams) {
@@ -51,7 +51,11 @@ export default function Products() {
 	if (requestStatus === "loading") {
 		return <Spinner margin="100px" />;
 	} else if (requestStatus === "error") {
-		return <h1>Error</h1>;
+		return (
+			<HStack minHeight="70vh" justifyContent="center" alignItems="center">
+				<Heading as="h3" margin="auto">Oops!! Something wen wrong</Heading>
+			</HStack>
+		);
 	} else if (requestStatus === "success") {
 		return (
 			<Box>
@@ -73,7 +77,12 @@ export default function Products() {
 						))}
 					</SimpleGrid>
 				)}
-				<Pagination active={activePage} limit={pageLimit} total={totalCount} handleSearchParams={handleSearchParams} />
+				<Pagination
+					active={activePage}
+					limit={pageLimit}
+					total={totalCount}
+					handleSearchParams={handleSearchParams}
+				/>
 			</Box>
 		);
 	}

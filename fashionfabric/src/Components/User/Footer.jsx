@@ -8,8 +8,11 @@ import {
 } from "@chakra-ui/react";
 import { List, ListItem, ListIcon, OrderedList, UnorderedList } from "@chakra-ui/react";
 import { FormControl, FormLabel, FormErrorMessage, FormHelperText, Input } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 export default function Footer() {
+	const navigate = useNavigate();
+
 	return (
 		<Stack
 			display="flex"
@@ -26,8 +29,10 @@ export default function Footer() {
 					collection launches and early access to limited-edition products and
 					collaborations.
 				</Text>
-				<Input type="email" placeholder="Email" />
-				<Button>Signup</Button>
+				{/* <Input type="email" placeholder="Email" /> */}
+				<Button width="100%" onClick={() => navigate("/account")}>
+					Signup
+				</Button>
 			</FormControl>
 
 			<UnorderedList flex="1" listStyleType="none" textAlign="left" spacing="10px">

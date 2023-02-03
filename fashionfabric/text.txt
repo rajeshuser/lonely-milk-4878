@@ -1,4 +1,8 @@
-componenet tree of the project
+create database
+add commit push
+deploy
+
+component tree of the project
 
 App:
 	navigation:

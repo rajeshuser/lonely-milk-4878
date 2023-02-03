@@ -11,16 +11,12 @@ export default function Cart() {
 	const [cartProducts, setCartProducts] = useState(dummyCartProducts)
 	const navigate = useNavigate()
 
-	if (user === null) {
-		alert("Please sign-in to see user cart")
-		// "navigate("/account")" is not immediatly getting triggered;
-		// being triggered after the browser is minimised and then clicked on the cart again
-		navigate("/account")
-		// below is alternative if above does not work
-		// return <Link to="/account">Go to account</Link>
-	}
-
 	useEffect(() => {
+		if (user === null) {
+			alert("Please sign-in to see user cart")
+			navigate("/account")
+		}
+		
 		getCartProducts()
 
 		function formatAsQueryParams(cartProducts) {
