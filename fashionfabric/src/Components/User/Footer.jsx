@@ -17,20 +17,22 @@ export default function Footer() {
 		<Stack
 			display="flex"
 			direction={["column", "column", "row"]}
-			padding="30px"
+			padding="30px 100px"
 			gap="10px"
-			width="90%"
+			width="100%"
 			margin="auto"
+			marginTop="10vh"
+			boxShadow="0px 0px 5px black"
 		>
 			<FormControl flex="1">
 				<FormLabel fontSize="large">Sign up</FormLabel>
-				<Text textAlign="justify" margin="10px auto" fontSize="small">
+				<Text textAlign="justify" margin="10px auto">
 					Sign up below for updates about the world of Fashion Fabric, including
 					collection launches and early access to limited-edition products and
 					collaborations.
 				</Text>
 				{/* <Input type="email" placeholder="Email" /> */}
-				<Button width="100%" onClick={() => navigate("/account")}>
+				<Button width="100%" border="1px solid grey" onClick={() => navigate("/account")}>
 					Signup
 				</Button>
 			</FormControl>

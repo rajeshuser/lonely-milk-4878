@@ -1,7 +1,8 @@
-push
-create database
-add commit push
-deploy
+todo:
+	push
+	create database
+	add commit push
+	deploy
 
 component tree of the project
 

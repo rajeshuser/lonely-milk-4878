@@ -13,7 +13,7 @@ export default function Admin() {
 
 	function handleAdminLogin() {
 		if (username === "admin" && password === "admin") {
-			navigate("/admindashboard");
+			navigate("/admindashboard?_page=1&_limit=10");
 			putAdminInLocalStorage();
 		} else {
 			alert("Please enter correct details");

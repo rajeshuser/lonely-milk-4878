@@ -6,7 +6,7 @@ import {
 	Input,
 	VStack,
 	Text,
-	Button,
+	Button
 } from "@chakra-ui/react";
 import {
 	AlertDialog,
@@ -14,7 +14,7 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogContent,
-	AlertDialogOverlay,
+	AlertDialogOverlay
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useContext } from "react";
@@ -34,12 +34,15 @@ const initialProduct = {
 	ageGroup: "",
 	season: "",
 	images: [],
-	description: "",
+	description: ""
 };
 
-function updater(product, action = { key: null, value: null }) {
+function reducer(product, action = { key: null, value: null }) {
 	switch (action.key) {
-		case "reset": return initialProduct;
+		case "reset":
+			return { ...initialProduct };
+		case "populate":
+			return action.value;
 		case "id":
 		case "name":
 		case "price":
@@ -59,50 +62,63 @@ function updater(product, action = { key: null, value: null }) {
 	}
 }
 
-export default function CRUDOperationsBox({ flex, setRefresh }) {
-	const [product, dispatch] = useReducer(updater, {});
+export default function CRUDOperationsBox({ flex, setRefresh, setProducts }) {
+	const [product, dispatch] = useReducer(reducer, initialProduct);
 	const { baseURL } = useContext(appContext);
 
-	function handleGetProduct() {}
-
-	function handlePatchProduct() {
-		// return;
-		patchProduct();
-		async function patchProduct() {
-			let response = await axios({
-				method: "patch",
-				baseURL,
-				url: `/products/${product.id}`,
-				headers: {
-					"content-type": "application/json",
-				},
-				data: product,
-			});
-			alert("Product is patched");
-			setRefresh({});
-			updater(null, { key: "reset" });
-		}
+	async function handleGetProduct() {
+		let response = await axios({
+			method: "get",
+			baseURL,
+			url: `/products/${product.id}`
+		});
+		dispatch({ key: "populate", value: response.data });
+		setProducts([response.data]);
+		alert("Product is populated");
 	}
 
-	function handleDeleteProduct() {
-		deleteProduct();
-		async function deleteProduct() {
-			let response = await axios({
-				method: "delete",
-				baseURL,
-				url: `/products/${product.id}`,
-			});
-			alert("Product is deleted");
-			setRefresh({});
-			updater(null, { key: "reset" });
+	async function handlePatchProduct() {
+		const productsWithoutEmptyFields = { ...product };
+		for (let key in productsWithoutEmptyFields) {
+			if (!productsWithoutEmptyFields[key]) {
+				delete productsWithoutEmptyFields[key];
+			}
 		}
+		let response = await axios({
+			method: "patch",
+			baseURL,
+			url: `/products/${product.id}`,
+			headers: {
+				"content-type": "application/json"
+			},
+			data: productsWithoutEmptyFields
+		});
+		alert("Product is patched");
+		setRefresh({});
+		dispatch({ key: "reset" });
+	}
+
+	async function handleDeleteProduct() {
+		let response = await axios({
+			method: "delete",
+			baseURL,
+			url: `/products/${product.id}`
+		});
+		alert("Product is deleted");
+		setRefresh({});
+		dispatch({ key: "reset" });
+	}
+
+	async function handleClearProduct() {
+		setRefresh({});
+		dispatch({ key: "reset" });
 	}
 
 	function capitalize(string) {
 		return string[0].toUpperCase() + string.substring(1);
 	}
 
-	function getFormControls(product = initialProduct) {
+	function getFormControls(product) {
 		let formControls = [];
 		for (let key in product) {
 			formControls.push(
@@ -110,28 +126,33 @@ export default function CRUDOperationsBox({ flex, setRefresh }) {
 					<Input
 						placeholder={capitalize(key)}
 						type={key === "price" ? "number" : "text"}
+						value={product[key]}
 						onChange={(event) => {
 							if (key === "images") {
 								dispatch({
 									key: key,
 									value: event.target.value
 										.split(",")
-										.map((image) => image.trim()),
+										.map((image) => image.trim())
 								});
 							} else {
 								return dispatch({ key: key, value: event.target.value });
 							}
 						}}
 					/>
-					{key === "images" ? (
+					<If isTruthy={key === "images"}>
 						<Text color="grey" textAlign="justify" fontSize="small">
-							Note: Separate multile image links by comma
+							* Separate multile image links by comma
 						</Text>
-					) : null}
-				</FormControl>,
+					</If>
+				</FormControl>
 			);
 		}
 		return formControls;
+	}
+
+	function If({ isTruthy, children }) {
+		return isTruthy ? children : null;
 	}
 
 	return (
@@ -140,13 +161,14 @@ export default function CRUDOperationsBox({ flex, setRefresh }) {
 			<Text color="grey" textAlign="justify" fontSize="small">
 				Note: Fields left empty will not be updated in database
 			</Text>
-			{getFormControls()}
+			{getFormControls(product)}
 			<Button
 				color="black"
 				width="100%"
 				border="1px solid grey"
 				_hover={{ backgroundColor: "green", color: "white" }}
 				onClick={handleGetProduct}
+				colorScheme="green"
 			>
 				Get
 			</Button>
@@ -156,6 +178,7 @@ export default function CRUDOperationsBox({ flex, setRefresh }) {
 				border="1px solid grey"
 				_hover={{ backgroundColor: "yellow", color: "black" }}
 				onClick={handlePatchProduct}
+				colorScheme="yellow"
 			>
 				Patch
 			</Button>
@@ -165,8 +188,12 @@ export default function CRUDOperationsBox({ flex, setRefresh }) {
 				border="1px solid grey"
 				_hover={{ backgroundColor: "red", color: "white" }}
 				onClick={handleDeleteProduct}
+				colorScheme="red"
 			>
 				Delete
+			</Button>
+			<Button color="black" width="100%" border="1px solid grey" onClick={handleClearProduct}>
+				Clear
 			</Button>
 		</Box>
 	);
@@ -186,8 +213,8 @@ var dummyProduct = {
 	season: "winter",
 	images: [
 		"https://assets.burberry.com/is/image/Burberryltd/EC955983-5422-40AF-AE13-A5FEDBACE6D4?$BBY_V2_ML_1x1$&wid=887&hei=887",
-		"https://assets.burberry.com/is/image/Burberryltd/7F53A08D-9474-42A0-A5AB-1DD2EA0BDDCD?$BBY_V2_SL_1x1$&wid=887&hei=887",
+		"https://assets.burberry.com/is/image/Burberryltd/7F53A08D-9474-42A0-A5AB-1DD2EA0BDDCD?$BBY_V2_SL_1x1$&wid=887&hei=887"
 	],
 	description:
-		"diam vulputate ut pharetra sit amet aliquam id diam maecenas ultricies mi eget mauris pharetra et ultrices neque ornare aenean euismod elementum nisi quis eleifend quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero enim sed faucibus",
+		"diam vulputate ut pharetra sit amet aliquam id diam maecenas ultricies mi eget mauris pharetra et ultrices neque ornare aenean euismod elementum nisi quis eleifend quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero enim sed faucibus"
 };

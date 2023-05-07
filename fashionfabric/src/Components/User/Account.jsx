@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { appContext } from "../Contexts/AppContext";
 import {
 	Modal,
@@ -16,7 +16,7 @@ import {
 	VStack,
 	Stack,
 	Text,
-	Spinner,
+	Spinner
 } from "@chakra-ui/react";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import User from "./User";
@@ -27,34 +27,36 @@ import axios from "axios";
 function isFormValid(formData, setInputValidatorMessage) {
 	if (formData.firstName === "") {
 		setInputValidatorMessage("The first name is required");
-		return;
+		return false;
 	}
 	if (formData.lastName === "") {
 		setInputValidatorMessage("The last name is required");
-		return;
+		return false;
 	}
-	if (formData.phone.length !== 10) {
+	if (/^\d\d\d\d\d\d\d\d\d\d$/.test(formData.phone) === false) {
 		setInputValidatorMessage("The phone number should have 10 digits");
-		return;
+		return false;
 	}
-	if (formData.email === "") {
-		setInputValidatorMessage("The email is required");
-		return;
+	if (/.+@.+mail.com/.test(formData.email) === false) {
+		setInputValidatorMessage("The email is invalid");
+		return false;
 	}
 	if (formData.address === "") {
 		setInputValidatorMessage("The address is required");
-		return;
+		return false;
 	}
-	if (formData.password === "") {
-		setInputValidatorMessage("The password is required");
-		return;
+	if (/......../.test(formData.password) === false) {
+		setInputValidatorMessage("The password should have atleast 8 characters");
+		return false;
 	}
 	return true;
 }
 
 function AccountFormModal({ baseURL, signInUser }) {
 	const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
-	const [InputValidatorMessage, setInputValidatorMessage] = useState("I am input validator");
+	const [InputValidatorMessage, setInputValidatorMessage] = useState(
+		"Information should be in correct format"
+	);
 	const initialFormData = {
 		firstName: "",
 		lastName: "",
@@ -64,7 +66,7 @@ function AccountFormModal({ baseURL, signInUser }) {
 		password: "",
 		cart: [],
 		favourites: [],
-		orders: [],
+		orders: []
 	};
 	const [formData, setFormData] = useState(initialFormData);
 
@@ -73,6 +75,7 @@ function AccountFormModal({ baseURL, signInUser }) {
 	};
 
 	const handleFormSubmit = (event) => {
+		event.preventDefault();
 		if (isFormValid(formData, setInputValidatorMessage) === false) {
 			return;
 		}
@@ -84,13 +87,14 @@ function AccountFormModal({ baseURL, signInUser }) {
 					baseURL,
 					url: "/users",
 					headers: {
-						"content-type": "application/json",
+						"content-type": "application/json"
 					},
-					data: formData,
+					data: formData
 				});
 				setFormData(initialFormData);
 				onClose();
-				signInUser(formData);
+				signInUser(response.data);
+				console.log({ formData, response });
 			} catch (error) {
 				console.log(error);
 			}
@@ -115,31 +119,39 @@ function AccountFormModal({ baseURL, signInUser }) {
 							type="text"
 							placeholder="First name"
 							onChange={(event) => handleInputChange("firstName", event.target.value)}
+							required
 						/>
 						<Input
 							type="text"
 							placeholder="Last name"
 							onChange={(event) => handleInputChange("lastName", event.target.value)}
+							required
 						/>
 						<Input
 							type="number"
 							placeholder="Phone number"
 							onChange={(event) => handleInputChange("phone", event.target.value)}
+							minLength="10"
+							maxLength="10"
+							required
 						/>
 						<Input
 							type="email"
 							placeholder="Email"
 							onChange={(event) => handleInputChange("email", event.target.value)}
+							required
 						/>
 						<Input
 							type="text"
 							placeholder="Address"
 							onChange={(event) => handleInputChange("address", event.target.value)}
+							required
 						/>
 						<Input
 							type="password"
 							placeholder="Password"
 							onChange={(event) => handleInputChange("password", event.target.value)}
+							required
 						/>
 					</ModalBody>
 					<ModalFooter>
@@ -162,7 +174,6 @@ function AccountEmailModal({ baseURL, setUserSearch, passEmail }) {
 	async function searchUser() {
 		try {
 			let response = await axios({ method: "get", baseURL, url: `/users?email=${email}` });
-			console.log(response);
 			if (response.data.length === 1) {
 				setDoesUserExist(true);
 				setUserSearch("emailExist");
@@ -193,6 +204,7 @@ function AccountEmailModal({ baseURL, setUserSearch, passEmail }) {
 							type="email"
 							placeholder="Email"
 							onChange={({ target: { value } }) => setEmail(value)}
+							required
 						/>
 					</ModalBody>
 					<ModalFooter>
@@ -216,15 +228,13 @@ function AccountPasswordModal({ setUserSearch, email, baseURL, signInUser }) {
 			let response = await axios({
 				method: "get",
 				baseURL,
-				url: `/users?email=${email}&password=${password}`,
+				url: `/users?email=${email}&password=${password}`
 			});
 			if (response.data.length === 1) {
 				setUserSearch("passwordIsCorrect");
-				console.log("user got after password", response.data[0]);
 				signInUser(response.data[0]);
 				onClose();
 			} else {
-				console.log(response.data);
 				alert("Wrong password");
 			}
 		} catch (error) {
@@ -247,6 +257,7 @@ function AccountPasswordModal({ setUserSearch, email, baseURL, signInUser }) {
 						type="password"
 						placeholder="Password"
 						onChange={({ target: { value } }) => setPassword(value)}
+						required
 					/>
 				</ModalBody>
 				<ModalFooter>
@@ -295,11 +306,12 @@ function AccountDetails({ user, signOutUser, setUserSearch }) {
 					<Button
 						colorScheme="orange"
 						width="20%"
-						margin="auto"
 						onClick={() => {
 							signOutUser();
 							setUserSearch(null);
 						}}
+						marginTop="10%"
+						padding="30px 50px"
 					>
 						Signout
 					</Button>
@@ -313,6 +325,11 @@ export default function Account() {
 	const { baseURL, user, signInUser, signOutUser } = useContext(appContext);
 	const [userSearch, setUserSearch] = useState(user);
 	const [email, setEmail] = useState(null);
+
+	useEffect(() => {
+		setUserSearch(user);
+	}, [user]);
+
 	return (
 		<Center minHeight="70vh">
 			{userSearch === null ? (

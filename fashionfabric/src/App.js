@@ -7,13 +7,13 @@ import Footer from "./Components/User/Footer";
 import { Divider } from "@chakra-ui/react";
 
 function App() {
-    return (
-        <div className="App">
-            <NavigationAndRoutes />
-            <Divider />
-            <Footer />
-        </div>
-    );
+	return (
+		<div className="App">
+			<NavigationAndRoutes />
+			{/* <Divider /> */}
+			<Footer />
+		</div>
+	);
 }
 
 export default App;
