@@ -4,18 +4,30 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { AppContextProvider } from "./Components/Contexts/AppContext";
-import { ChakraProvider } from "@chakra-ui/react";
+import {
+	ChakraProvider,
+	ThemeProvider,
+	theme,
+	ColorModeProvider,
+	CSSReset
+} from "@chakra-ui/react";
 import { BrowserRouter } from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-    <AppContextProvider>
-        <BrowserRouter>
-            <ChakraProvider>
-                <App />
-            </ChakraProvider>
-        </BrowserRouter>
-    </AppContextProvider>
+	<AppContextProvider>
+		<BrowserRouter>
+			<ChakraProvider>
+				{/* <App /> */}
+				<ThemeProvider theme={theme}>
+					<ColorModeProvider>
+						<CSSReset />
+						<App />
+					</ColorModeProvider>
+				</ThemeProvider>
+			</ChakraProvider>
+		</BrowserRouter>
+	</AppContextProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

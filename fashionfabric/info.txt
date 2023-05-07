@@ -1,4 +1,10 @@
-componenet tree of the project
+todo:
+	push
+	create database
+	add commit push
+	deploy
+
+component tree of the project
 
 App:
 	navigation:
@@ -21,6 +27,9 @@ dummyData Vs downloadedData
 
 storages: variableStorage(discard), localStoarge(discard), serverStorage(consider)
 
+
+deplpoy
+
 URL:
 	STAIC-SEGMENT
 	DYNAMIC-SEGMENT
@@ -40,7 +49,7 @@ USER:
 	favourites: <[id,...]>
 	orders: <[[id, quantity],...]>
 
-PRODUCT:
+PRODUCT: (values are present on products page)
 	id: <number>
 	name: <string>
 	price: <numebr>
@@ -51,6 +60,6 @@ PRODUCT:
 	material: <string>
 	gender: <string>
 	ageGroup: <string>
-	season: <string>
+	season: <string> (winter, summer, mansoon)
 	images: <string>
 	description: <string>

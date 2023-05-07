@@ -1,0 +1,25 @@
+GET https://ffapi.onrender.com/products
+
+###
+GET https://ffapi.onrender.com/products?gender=men&_limit=5
+
+###
+POST https://ffapi.onrender.com/products
+Content-Type: application/json
+
+{
+	"images": [
+		"https://assets.burberry.com/is/image/Burberryltd/EC955983-5422-40AF-AE13-A5FEDBACE6D4?$BBY_V2_ML_1x1$&wid=887&hei=887",
+		"https://assets.burberry.com/is/image/Burberryltd/7F53A08D-9474-42A0-A5AB-1DD2EA0BDDCD?$BBY_V2_SL_1x1$&wid=887&hei=887"
+	],
+	"name": "Ne et cheveux en faisait",
+	"price": 1399,
+	"color": "brown",
+	"category": "wallets",
+	"style": "cardigan",
+	"size": "xxl",
+	"gender": "female",
+	"ageGroup": "child",
+	"season": "winter",
+	"description": "a"
+}
